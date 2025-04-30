@@ -62,6 +62,7 @@ def ReadMtd():
     logging.info("ReadMtd is being executed...")
     with open("", 'rb') as record:          #Enter the location of the folder from where you want to read the files.
         data = pickle.load(record)
+    record.close()
     logging.info("ReadMtd has completed the task.")
     return data
 
