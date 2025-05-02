@@ -70,6 +70,11 @@ def ManageFilesRecord():
     logging.info("ManageFilesRecord function is being executed...")
     RcodFiles = ReadMtd()
     ActalFiles = []
+    
+    mode = 0
+    DiffInNum = False
+    TdFiles = []
+    NwFiles = []
 
     for file_name in os.listdir('\\'):           #Enter the folder to be uploaded/maintained 
         file_path = os.path.join('\\', file_name)        #Enter the folder to be uploaded/maintained 
@@ -82,31 +87,36 @@ def ManageFilesRecord():
         creation_time = time.ctime(os.path.getctime(file_path))
         grp = [file_name, creation_time, modification_time, ' ', False]
         ActalFiles.append(grp)
+    
+    RcodName = set([file[0] for file in RcodFiles])
+    ActalName = set([file[0] for file in ActalFiles])
 
     if len(RcodFiles) > len(ActalFiles):
         logging.info("Checking files that are to be deleted and updating their modification time")
-        TdFiles = []
+
+        Td = list(RcodName - ActalName)
         for file in RcodFiles:
-            if file not in ActalFiles:
+            if file[0] in Td:
+                # ind = RcodFiles.index(file)
+                # del RcodFiles[ind]
                 TdFiles.append(file)
-            else:
-                i = ActalFiles.index(file)
-                file[3] = file[2]
-                file[2] = ActalFiles[i][2]
-        WriteMtd(TdFiles, 2)
+
+        DiffInNum = True
+        mode = 2
+        # WriteMtd(TdFiles, 2)
         logging.info("Files from record has been removed")
 
     elif len(RcodFiles) < len(ActalFiles):
         logging.info("Checking files that are newly created and updating their modification time")
-        NwFiles = []
+        
+        Nw = list(ActalName - RcodName)
         for file in ActalFiles:
-            if file not in RcodFiles:
+            if file[0] in Nw:
                 NwFiles.append(file)
-            else:
-                i = RcodFiles.index(file)
-                RcodFiles[i][3] = RcodFiles[i][2]
-                RcodFiles[i][2] = file[2]
-        WriteMtd(NwFiles, 1)
+                
+        DiffInNum = True
+        mode = 1            
+        # WriteMtd(NwFiles, 1)
         logging.info("Files in the record has been added.")
 
     else:
