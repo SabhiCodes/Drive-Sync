@@ -74,6 +74,11 @@ def ManageFilesRecord():
     for file_name in os.listdir('\\'):           #Enter the folder to be uploaded/maintained 
         file_path = os.path.join('\\', file_name)        #Enter the folder to be uploaded/maintained 
         modification_time = time.ctime(os.path.getmtime(file_path))
+        for Rfile in RcodFiles:
+            if Rfile[0] == file_name and Rfile[2] != modification_time:
+                Rfile[3] = Rfile[2]
+                Rfile[2] = modification_time
+                break
         creation_time = time.ctime(os.path.getctime(file_path))
         grp = [file_name, creation_time, modification_time, ' ', False]
         ActalFiles.append(grp)
